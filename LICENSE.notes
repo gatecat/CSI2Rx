@@ -1,0 +1,14 @@
+All of the source code written by me (in particular */*.vhd except the examples
+folder) is licensed under the MIT license,see the LICENSE file for more
+information.
+
+For obvious reasons this does not extend to any files in the example project
+generated or included by Xilinx's tools (including but not limited to Xilinx's
+IP cores such as the DDR3 interface). The copyright on these belongs to Xilinx
+and Xilinx's restrictions will apply.
+
+The register values in the `ov13850_4k_regs.vhd` file were based on open source
+Linux drivers, but it is my understanding that these are not copyrightable in
+themselves.
+
+All mentioned trademarks are property of their respective owners.
