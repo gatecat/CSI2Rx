@@ -4,7 +4,8 @@
 This project is an open source (MIT license) MIPI CSI-2 receive core for Xilinx FPGAs, supporting 4k resolution at greater than 30fps.
 It includes a complete demo project, designed for the Genesys 2 board with a custom FMC to camera card, that writes the 4k video into a DDR3 framebuffer and
 outputs at 1080p (with a choice of scaled or cropped) to the HDMI and VGA ports. The demo camera module is the Omnivision OV13850 (using the Firefly camera module),
-which supports 4k at up to 30fps, although the demo runs at 24fps where it seems performance is better - this may partly be down to the choice of register values though. I believe maximum framerate is being limited by the camera module rather than my driver.
+which supports 4k at up to 30fps, although the demo runs at 24fps where it seems performance is better - this may partly be down to the choice of register values though. Although the OV13850
+sensor/ADC does not seem to work much above 30fps; the camera also has a "test pattern" mode which bypasses this and which I have used to test my driver up to 45fps.
 
 ## Structure
   - The `mipi-csi-rx` folder contains all the components (except the `video_timing_ctrl` timing generator, in the `video-misc` folder) needed for the CSI-2 Rx itself.
@@ -24,9 +25,20 @@ which supports 4k at up to 30fps, although the demo runs at 24fps where it seems
   - `dvi-tx` contains a simple DVI transmitter, for the Genesys 2 HDMI output port
   - `demo-top` contains the top level files for the demo project; and `examples` contains the Vivado project itself for the demo
 
-## Hardware
+## Test Hardware
 The current test platform is the Digilent Genesys 2 (Kintex-7 XC7K325T-2) with an OV13850 camera. The CSI-2 lanes connect to 2.5V LVDS inputs on the FPGA, using
-a custom FMC breakout board. Earlier testing was done on a Virtex-6 FPGA, unfortunately I no longer have access to this platform so support cannot be guaranteed.
+a custom FMC interface board. Earlier testing was done on a Virtex-6 FPGA, unfortunately I no longer have access to this platform so support cannot be guaranteed.
+
+The exact camera used was the Firefly RK3288 camera module, which is a convenient way of obtaining the OV13850 camera - search for "OV13850 Firefly RK3288" and various sites selling it can be
+found starting from $40 or so. In the future I'm looking into using smartphone replacement camera modules. I have ordered some IUNI U2 replacement back cameras which are P16V01A modules based
+on the 4k60-capable OV16825 and have a publicly available pinout.
+
+The first version of my FMC breakout board, which I am using at the moment, has some serious flaws and has required various bodges so I am not releasing the design for this version. I have
+ordered a new version and will post the designs for this once I receive it if it works. The board also has a connector for the 4k 5.5" Z5 premium LCD; which I am also working on code to drive.
+
+A quick picture of my test setup is below.
+
+![4k Camera Testing](http://ds0.me/csi_rx/csi_testing.jpg)
 
 ## Customisation
 See `csi_rx_top.vhd` for more information on the parameters that need to be adjusted depending on your camera and application.
