@@ -33,8 +33,7 @@ The exact camera used was the Firefly RK3288 camera module, which is a convenien
 found starting from $40 or so. In the future I'm looking into using smartphone replacement camera modules. I have ordered some IUNI U2 replacement back cameras which are P16V01A modules based
 on the 4k60-capable OV16825 and have a publicly available pinout.
 
-The first version of my FMC breakout board, which I am using at the moment, has some serious flaws and has required various bodges so I am not releasing the design for this version. I have
-ordered a new version and will post the designs for this once I receive it if it works. The board also has a connector for the 4k 5.5" Z5 premium LCD; which I am also working on code to drive.
+The FMC board also has a connector for the 4k 5.5" Z5 premium LCD; which I am also working on code to drive. The KiCad board designs and gerbers are in the [DSITx](https://github.com/daveshah1/DSITx/tree/master/hardware/fmc-v1.2) repo.
 
 A quick picture of my test setup is below.
 
