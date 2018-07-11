@@ -1,6 +1,7 @@
-SOURCES = $(wildcard phy/*.v)
+SOURCES=$(wildcard phy/*.v)
+LINT_TOP=dphy_oserdes # temp
 
 lint: $(SOURCES)
-	verilator --lint-only $^
+	verilator --top-module $(LINT_TOP) --lint-only $^
 
 .PHONY: lint
