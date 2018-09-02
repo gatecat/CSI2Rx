@@ -30,7 +30,7 @@
  *
  */
 
-module word_combiner #(
+module dphy_rx_word_combiner #(
 	parameter LANES = 2
 ) (
 	input clock, // byte clock
