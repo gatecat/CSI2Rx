@@ -1,5 +1,5 @@
 SOURCES=$(wildcard phy/*.v)
-LINT_TOP=dphy_rx_byte_align # temp
+LINT_TOP=word_combiner # temp
 
 lint: $(SOURCES)
 	verilator --top-module $(LINT_TOP) --lint-only $^
