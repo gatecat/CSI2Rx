@@ -26,7 +26,7 @@
  * MIPI CSI-2 header ECC computation
  */
 
- module csi_header_ecc(
+ module csi_header_ecc (
 	 input [23:0] data,
 	 output [7:0] ecc
 );

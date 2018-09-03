@@ -30,7 +30,7 @@
 
 module dphy_iserdes(
 	input dphy_clk, // Fast D-PHY DDR clock (4x sys_clk)
-  input [1:0] din, // Input from arch DDR primitive, D1 should be the bit after D0
+	input [1:0] din, // Input from arch DDR primitive, D1 should be the bit after D0
 	input sys_clk, // System byte clock
 	input areset, // Active high async reset
 	output [7:0] dout // Output data

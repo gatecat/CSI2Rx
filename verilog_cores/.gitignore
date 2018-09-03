@@ -1,0 +1,5 @@
+*.o
+work/
+*.cf
+*.blif
+*.json
