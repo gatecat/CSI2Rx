@@ -1,5 +1,5 @@
-SOURCES=$(wildcard phy/*.v)
-LINT_TOP=word_combiner # temp
+SOURCES=$(wildcard phy/*.v csi/*.v)
+LINT_TOP=csi_rx_packet_handler # temp
 
 lint: $(SOURCES)
 	verilator --top-module $(LINT_TOP) --lint-only $^
