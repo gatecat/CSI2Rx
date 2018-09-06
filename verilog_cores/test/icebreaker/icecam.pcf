@@ -22,3 +22,6 @@ set_io LED1       26
 set_io LED4       23
 set_io BTN1       20
 set_io BTN3       18
+
+set_io clk12 35
+set_io dbg_tx 13

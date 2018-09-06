@@ -22,17 +22,19 @@
  *
  */
 
-module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable,
+module top(input clk12,
+		   input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable,
 		   input dphy_clk, input [1:0] dphy_data, input dphy_lp,
 		   output LEDR_N, LEDG_N, LED1, LED2, LED3, LED4, LED5,
-		   input BTN_N, BTN1, BTN2, BTN3);
+		   input BTN_N, BTN1, BTN2, BTN3,
+		   output dbg_tx);
 
 	wire areset = !BTN_N;
 	assign cam_scl = mpsse_scl ? 1'bz : 1'b0;
     assign cam_sda = mpsse_sda ? 1'bz : 1'b0;
 	assign cam_enable = 1'b1;
 	wire sys_clk;
-	wire in_line, in_frame;
+	wire in_line, in_frame, vsync;
 	wire [31:0] payload_data;
 	wire payload_valid;
 	wire [15:0] raw_deser;
@@ -63,7 +65,7 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 		.payload_enable(payload_valid),
 		.payload_frame(payload_frame),
 
-		.vsync(),
+		.vsync(vsync),
 		.in_line(in_line),
 		.in_frame(in_frame),
 
@@ -78,10 +80,35 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 	always @(posedge sys_clk)
 		sclk_div <= sclk_div + 1'b1;
 
-	assign {LEDR_N, LEDG_N} = ~(sclk_div[22:21]);
-	//assign LED1 = in_frame;
-	//assign LED2 = !in_frame;
-	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[5:0] : 3'b000;
+	assign LEDR_N = !sclk_div[22];
+	assign LEDG_N = !in_frame;
+	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[4:0] : 0;
 	//assign {LED5, LED4, LED3} = raw_deser[2:0];
 	//assign {LED5, LED4, LED3} = {wait_sync, aligned_valid};
+	reg [7:0] uart_data_cam, uart_data_clk12_a, uart_data_clk12, uart_data;
+	wire uart_busy;
+
+	always @(posedge sys_clk) begin
+		if (!payload_frame)
+			uart_data_cam <= 8'hFF;
+		else if (payload_valid)
+			uart_data_cam <= payload_data[7:0];
+	end
+
+	always @(posedge clk12) begin
+		uart_data_clk12_a <= uart_data_cam;
+		uart_data_clk12 <= uart_data_clk12_a;
+		if (!uart_busy)
+			uart_data <= uart_data_clk12;
+	end
+
+	uart uart_i(
+		.uart_busy(uart_busy),
+		.uart_tx(dbg_tx),
+		// Inputs
+		.uart_wr_i(!uart_busy),
+		.uart_dat_i(uart_data),
+		.sys_clk_i(clk12),
+		.sys_rst_i(areset)
+	);
 endmodule
