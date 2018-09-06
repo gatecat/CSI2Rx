@@ -97,7 +97,7 @@ module csi_rx_packet_handler #(
 						bytes_read <= 0;
 						if (data_enable) begin
 							packet_len <= hdr_packet_len;
-							if (long_packet)
+							if (long_packet && valid_packet)
 								state <= 3'b010;
 							else
 								state <= 3'b011;

@@ -55,23 +55,17 @@ module dphy_rx_word_combiner #(
 	reg [31:0] word_int;
 	reg [1:0] byte_cnt;
 
-	reg [8*LANES-1:0] bytes_reg;
-
 	always @(posedge clock)
 	begin
 		if (reset) begin
 			valid <= 0;
 			word_int <= 0;
 			byte_cnt <= 0;
-			bytes_reg <= 0;
 
 			word_out <= 0;
 			word_enable <= 0;
 			word_frame <= 0;
 		end else if (enable) begin
-
-			bytes_reg <= bytes_in;
-
 			if (all_valid && !valid && wait_for_sync) begin
 				byte_cnt <= 0;
 				word_frame <= 1'b1;
@@ -81,20 +75,23 @@ module dphy_rx_word_combiner #(
 				valid <= 1'b0;
 			end
 
-			if (LANES == 4) begin
-				word_out <= bytes_reg;
-				word_enable <= 1'b1;
-			end else begin
-				byte_cnt <= byte_cnt + LANES;
-				word_int <= {bytes_reg, word_int[31:8*LANES]};
-				if ((byte_cnt + LANES) % 4 == 0) begin
-					word_out <= {bytes_reg, word_int[31:8*LANES]};
+			if (valid) begin
+				if (LANES == 4) begin
+					word_out <= bytes_in;
 					word_enable <= 1'b1;
 				end else begin
-					word_enable <= 1'b0;
+					byte_cnt <= byte_cnt + LANES;
+					word_int <= {bytes_in, word_int[31:8*LANES]};
+					if ((byte_cnt + LANES) % 4 == 0) begin
+						word_out <= {bytes_in, word_int[31:8*LANES]};
+						word_enable <= 1'b1;
+					end else begin
+						word_enable <= 1'b0;
+					end
 				end
+			end else begin
+				word_enable <= 1'b0;
 			end
-
 		end
 	end
 

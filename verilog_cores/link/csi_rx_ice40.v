@@ -110,7 +110,9 @@ module csi_rx_ice40 #(
 		assign dbg_raw_ddr[2*ii+1:2*ii] = din_raw;
 
 		wire [7:0] din_deser;
-		dphy_iserdes iserdes_i (
+		dphy_iserdes #(
+			.REG_INPUT(1'b1)
+		) iserdes_i (
 		   .dphy_clk(dphy_clk),
 		   .din(din_raw),
 		   .sys_clk(word_clk),
@@ -176,7 +178,7 @@ module csi_rx_ice40 #(
 		.data_enable(comb_word_en),
 		.data_frame(comb_word_frame),
 
-		.lp_detect(dphy_lp),
+		.lp_detect(!dphy_lp),
 
 		.sync_wait(wait_for_sync),
 		.packet_done(word_packet_done),

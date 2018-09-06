@@ -40,6 +40,7 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 	wire [3:0] raw_ddr;
 	wire [1:0] aligned_valid;
 	wire wait_sync;
+	wire payload_frame;
 
 	csi_rx_ice40 #(
 		.LANES(2), // lane count
@@ -60,7 +61,7 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 		.word_clk(sys_clk),
 		.payload_data(payload_data),
 		.payload_enable(payload_valid),
-		.payload_frame(),
+		.payload_frame(payload_frame),
 
 		.vsync(),
 		.in_line(in_line),
@@ -78,9 +79,9 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 		sclk_div <= sclk_div + 1'b1;
 
 	assign {LEDR_N, LEDG_N} = ~(sclk_div[22:21]);
-	assign LED1 = in_frame;
-	assign LED2 = !in_frame;
-	assign {LED5, LED4, LED3} = payload_valid ? payload_data[7:5] : 3'b000;
+	//assign LED1 = in_frame;
+	//assign LED2 = !in_frame;
+	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[5:0] : 3'b000;
 	//assign {LED5, LED4, LED3} = raw_deser[2:0];
 	//assign {LED5, LED4, LED3} = {wait_sync, aligned_valid};
 endmodule
