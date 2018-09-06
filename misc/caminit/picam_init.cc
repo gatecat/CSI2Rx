@@ -139,7 +139,7 @@ static void write_cmos_sensor(uint16_t addr, uint8_t value) {
 	i2c_stop();
 }
 
-const int framelength = 1332;
+const int framelength = 666;
 const int linelength = 3448;
 
 static void cam_init() {
@@ -167,16 +167,16 @@ static void cam_init() {
 	write_cmos_sensor(0x0169,  0x00); //Y_ADD_STA_A[7:0]
 	write_cmos_sensor(0x016A,  0x09); //Y_ADD_END_A[11:8]
 	write_cmos_sensor(0x016B,  0x9F); //Y_ADD_END_A[7:0]
-	write_cmos_sensor(0x016C,  0x06); //x_output_size[11:8] = 1640
-	write_cmos_sensor(0x016D,  0x68); //x_output_size[7:0]
-	write_cmos_sensor(0x016E,  0x04); //y_output_size[11:8] = 1232
-	write_cmos_sensor(0x016F,  0xD0); //y_output_size[7:0]
+	write_cmos_sensor(0x016C,  0x02); //x_output_size[11:8] = 640
+	write_cmos_sensor(0x016D,  0x80); //x_output_size[7:0]
+	write_cmos_sensor(0x016E,  0x01); //y_output_size[11:8] = 480
+	write_cmos_sensor(0x016F,  0xE0); //y_output_size[7:0]
 	write_cmos_sensor(0x0170,  0x01); //X_ODD_INC_A
 	write_cmos_sensor(0x0171,  0x01); //Y_ODD_INC_A
-	write_cmos_sensor(0x0174,  0x01); //BINNING_MODE_H_A = x2-binning
-	write_cmos_sensor(0x0175,  0x01); //BINNING_MODE_V_A = x2-binning
-	write_cmos_sensor(0x018C,  0x0A); //CSI_DATA_FORMAT_A[15:8]
-	write_cmos_sensor(0x018D,  0x0A); //CSI_DATA_FORMAT_A[7:0]
+	write_cmos_sensor(0x0174,  0x02); //BINNING_MODE_H_A = x4-binning
+	write_cmos_sensor(0x0175,  0x02); //BINNING_MODE_V_A = x4-binning
+	write_cmos_sensor(0x018C,  0x08); //CSI_DATA_FORMAT_A[15:8]
+	write_cmos_sensor(0x018D,  0x08); //CSI_DATA_FORMAT_A[7:0]
 	write_cmos_sensor(0x0301,  0x05); //VTPXCK_DIV
 	write_cmos_sensor(0x0303,  0x01); //VTSYCK_DIV
 	write_cmos_sensor(0x0304,  0x03); //PREPLLCK_VT_DIV
@@ -186,7 +186,7 @@ static void cam_init() {
 	write_cmos_sensor(0x0309,  0x0A); //OPPXCK_DIV
 	write_cmos_sensor(0x030B,  0x01); //OPSYCK_DIV
 	write_cmos_sensor(0x030C,  0x00); //PLL_OP_MPY[10:8]
-	write_cmos_sensor(0x030D,  0x2E); //PLL_OP_MPY[7:0]
+	write_cmos_sensor(0x030D,  0x08); //PLL_OP_MPY[7:0]
 	write_cmos_sensor(0x455E,  0x00); //??
 	write_cmos_sensor(0x471E,  0x4B); //??
 	write_cmos_sensor(0x4767,  0x0F); //??

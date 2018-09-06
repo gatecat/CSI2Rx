@@ -1,0 +1,6 @@
+*.blif
+*.json
+*.asc
+*.bin
+*.rpt
+*.log

@@ -1,0 +1,24 @@
+set_io mpsse_sda 6 #FTDI D0
+set_io mpsse_scl 9 #FTDI D1
+
+set_io cam_enable 3 #P1A7
+set_io cam_sda 34 #P1B3
+set_io cam_scl 28 #P1B10
+
+set_io dphy_clk 32 #P1B9
+set_io dphy_data[0] 42 #P1B7
+set_io dphy_data[1] 43 #P1B1
+set_io dphy_lp 48 #P1A8
+
+set_io BTN_N      10
+set_io LEDR_N     11
+set_io LEDG_N     37
+
+set_io LED2       27
+set_io LED3       25
+set_io LED5       21
+set_io BTN2       19
+set_io LED1       26
+set_io LED4       23
+set_io BTN1       20
+set_io BTN3       18
