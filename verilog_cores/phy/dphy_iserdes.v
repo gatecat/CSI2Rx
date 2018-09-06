@@ -60,7 +60,7 @@ module dphy_iserdes(
 		if (areset)
 			reg_word <= 0;
 		else
-			reg_word <= {iserdes_din, reg_word[5:0]}; // MIPI interface uses LSB first
+			reg_word <= {iserdes_din, reg_word[7:2]}; // MIPI interface uses LSB first
 
 	reg [7:0] out_sync_regs[0:NUM_OUT_SYNCFFS-1];
 	integer i;
