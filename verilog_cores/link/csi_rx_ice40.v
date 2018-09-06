@@ -32,7 +32,7 @@ module csi_rx_ice40 #(
 
 	parameter [1:0] VC = 2'b00, // MIPI CSI-2 "virtual channel"
 	parameter [5:0] FS_DT = 6'h00, // Frame start data type
-	parameter [5:0] FE_DT = 6'h00, // Frame end data type
+	parameter [5:0] FE_DT = 6'h01, // Frame end data type
 	parameter [5:0] VIDEO_DT = 6'h2A, // Video payload data type (6'h2A = 8-bit raw, 6'h2B = 10-bit raw, 6'h2C = 12-bit raw)
 	parameter [15:0] MAX_LEN = 8192 // Max expected packet len, used as timeout
 )(
@@ -51,6 +51,7 @@ module csi_rx_ice40 #(
 	output [8*LANES-1:0] dbg_raw_deser,
 	output [8*LANES-1:0] dbg_aligned,
 	output [LANES-1:0] dbg_aligned_valid,
+	output dbg_wait_sync,
 
 	output vsync,
 	output in_line,
@@ -157,6 +158,8 @@ module csi_rx_ice40 #(
 		.word_enable(comb_word_en),
 		.word_frame(comb_word_frame)
 	);
+
+	assign dbg_wait_sync = wait_for_sync;
 
 	csi_rx_packet_handler #(
 		.VC(VC),

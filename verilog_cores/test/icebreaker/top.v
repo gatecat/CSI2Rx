@@ -36,7 +36,10 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 	wire [31:0] payload_data;
 	wire payload_valid;
 	wire [15:0] raw_deser;
+	wire [15:0] aligned_deser;
 	wire [3:0] raw_ddr;
+	wire [1:0] aligned_valid;
+	wire wait_sync;
 
 	csi_rx_ice40 #(
 		.LANES(2), // lane count
@@ -44,7 +47,7 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 
 		.VC(2'b00), // MIPI CSI-2 "virtual channel"
 		.FS_DT(6'h00), // Frame start data type
-		.FE_DT(6'h00), // Frame end data type
+		.FE_DT(6'h01), // Frame end data type
 		.VIDEO_DT(6'h2A), // Video payload data type (6'h2A = 8-bit raw, 6'h2B = 10-bit raw, 6'h2C = 12-bit raw)
 		.MAX_LEN(8192) // Max expected packet len, used as timeout
 	) csi_rx_i (
@@ -63,9 +66,10 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 		.in_line(in_line),
 		.in_frame(in_frame),
 
+		.dbg_aligned_valid(aligned_valid),
 		.dbg_raw_deser(raw_deser),
-		.dbg_raw_ddr(raw_ddr)
-
+		.dbg_raw_ddr(raw_ddr),
+		.dbg_wait_sync(wait_sync)
 	);
 
 
@@ -76,6 +80,7 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 	assign {LEDR_N, LEDG_N} = ~(sclk_div[22:21]);
 	assign LED1 = in_frame;
 	assign LED2 = !in_frame;
-	//assign {LED5, LED4, LED3} = payload_valid ? payload_data[7:5] : 3'b000;
-	assign {LED5, LED4, LED3} = raw_deser[2:0];
+	assign {LED5, LED4, LED3} = payload_valid ? payload_data[7:5] : 3'b000;
+	//assign {LED5, LED4, LED3} = raw_deser[2:0];
+	//assign {LED5, LED4, LED3} = {wait_sync, aligned_valid};
 endmodule

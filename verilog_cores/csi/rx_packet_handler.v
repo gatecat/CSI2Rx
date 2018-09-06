@@ -33,7 +33,7 @@
 module csi_rx_packet_handler #(
 	parameter [1:0] VC = 2'b00, // MIPI CSI-2 "virtual channel"
 	parameter [5:0] FS_DT = 6'h00, // Frame start data type
-	parameter [5:0] FE_DT = 6'h00, // Frame end data type
+	parameter [5:0] FE_DT = 6'h01, // Frame end data type
 	parameter [5:0] VIDEO_DT = 6'h2A, // Video payload data type (6'h2A = 8-bit raw, 6'h2B = 10-bit raw, 6'h2C = 12-bit raw)
 	parameter [15:0] MAX_LEN = 8192 // Max expected packet len, used as timeout
 ) (
