@@ -35,6 +35,8 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 	wire in_line, in_frame;
 	wire [31:0] payload_data;
 	wire payload_valid;
+	wire [15:0] raw_deser;
+	wire [3:0] raw_ddr;
 
 	csi_rx_ice40 #(
 		.LANES(2), // lane count
@@ -59,7 +61,11 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 
 		.vsync(),
 		.in_line(in_line),
-		.in_frame(in_frame)
+		.in_frame(in_frame),
+
+		.dbg_raw_deser(raw_deser),
+		.dbg_raw_ddr(raw_ddr)
+
 	);
 
 
@@ -70,5 +76,6 @@ module top(input mpsse_sda, mpsse_scl, inout cam_sda, cam_scl, output cam_enable
 	assign {LEDR_N, LEDG_N} = ~(sclk_div[22:21]);
 	assign LED1 = in_frame;
 	assign LED2 = !in_frame;
-	assign {LED5, LED4, LED3} = payload_valid ? payload_data[7:5] : 3'b000;
+	//assign {LED5, LED4, LED3} = payload_valid ? payload_data[7:5] : 3'b000;
+	assign {LED5, LED4, LED3} = raw_deser[2:0];
 endmodule

@@ -47,6 +47,11 @@ module csi_rx_ice40 #(
 	output payload_enable,
 	output payload_frame,
 
+	output [2*LANES-1:0] dbg_raw_ddr,
+	output [8*LANES-1:0] dbg_raw_deser,
+	output [8*LANES-1:0] dbg_aligned,
+	output [LANES-1:0] dbg_aligned_valid,
+
 	output vsync,
 	output in_line,
 	output in_frame
@@ -101,6 +106,7 @@ module csi_rx_ice40 #(
 			.D_IN_0(din_raw[0]),
 			.D_IN_1(din_raw[1])
 		);
+		assign dbg_raw_ddr[2*ii+1:2*ii] = din_raw;
 
 		wire [7:0] din_deser;
 		dphy_iserdes iserdes_i (
@@ -112,6 +118,7 @@ module csi_rx_ice40 #(
 	    );
 
     	wire [7:0] din_deser_swap = PAIRSWAP[ii] ? ~din_deser : din_deser;
+		assign dbg_raw_deser[8*ii+7:8*ii] = din_deser_swap;
 
 		dphy_rx_byte_align baligner_i (
 			.clock(word_clk),
@@ -126,6 +133,9 @@ module csi_rx_ice40 #(
 
 	end
 	endgenerate
+
+	assign dbg_aligned = aligned_bytes;
+	assign dbg_aligned_valid = aligned_bytes_valid;
 
 	wire [31:0] comb_word;
 	wire comb_word_en, comb_word_frame;
@@ -166,7 +176,7 @@ module csi_rx_ice40 #(
 		.lp_detect(dphy_lp),
 
 		.sync_wait(wait_for_sync),
-		.packet_done(byte_packet_done),
+		.packet_done(word_packet_done),
 
 		.payload(payload_data),
 	 	.payload_enable(payload_enable),
