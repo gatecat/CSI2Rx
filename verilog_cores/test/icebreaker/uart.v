@@ -26,16 +26,16 @@ module uart(
   wire uart_busy = |bitcount[3:1];
   wire sending = |bitcount;
 
-  // sys_clk_i is 12MHz.  We want a 3000000Hz clock
+  // sys_clk_i is 12MHz.  We want a 115200 clock
 
   reg [28:0] d;
-  wire [28:0] dInc = d[28] ? (3000000) : (3000000 - 12000000);
+  wire [28:0] dInc = d[28] ? (115200) : (115200 - 12000000);
   wire [28:0] dNxt = d + dInc;
   always @(posedge sys_clk_i)
   begin
     d = dNxt;
   end
-  wire ser_clk = ~d[28]; // this is the 3000000 Hz clock
+  wire ser_clk = ~d[28]; // this is the 115200 Hz clock
 
   always @(posedge sys_clk_i)
   begin

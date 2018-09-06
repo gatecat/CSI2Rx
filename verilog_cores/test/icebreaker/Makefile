@@ -1,4 +1,4 @@
-SOURCES = $(wildcard ../../csi/*.v ../../phy/*.v ../../link/*.v uart.v top.v)
+SOURCES = $(wildcard ../../csi/*.v ../../phy/*.v ../../link/*.v ../../misc/*.v uart.v top.v)
 PROJ=camera
 PIN_DEF=icecam.pcf
 DEVICE=up5k

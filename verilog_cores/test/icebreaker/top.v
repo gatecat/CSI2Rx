@@ -33,7 +33,7 @@ module top(input clk12,
 	assign cam_scl = mpsse_scl ? 1'bz : 1'b0;
     assign cam_sda = mpsse_sda ? 1'bz : 1'b0;
 	assign cam_enable = 1'b1;
-	wire sys_clk;
+	wire video_clk;
 	wire in_line, in_frame, vsync;
 	wire [31:0] payload_data;
 	wire payload_valid;
@@ -60,7 +60,7 @@ module top(input clk12,
 
 		.areset(areset),
 
-		.word_clk(sys_clk),
+		.word_clk(video_clk),
 		.payload_data(payload_data),
 		.payload_enable(payload_valid),
 		.payload_frame(payload_frame),
@@ -77,38 +77,95 @@ module top(input clk12,
 
 
 	reg [22:0] sclk_div;
-	always @(posedge sys_clk)
+	always @(posedge video_clk)
 		sclk_div <= sclk_div + 1'b1;
 
 	assign LEDR_N = !sclk_div[22];
 	assign LEDG_N = !in_frame;
 	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[4:0] : 0;
-	//assign {LED5, LED4, LED3} = raw_deser[2:0];
-	//assign {LED5, LED4, LED3} = {wait_sync, aligned_valid};
-	reg [7:0] uart_data_cam, uart_data_clk12_a, uart_data_clk12, uart_data;
-	wire uart_busy;
+	// Workaround: not seeing FS/FE packets for some reason
+	reg [15:0] frame_timeout;
 
-	always @(posedge sys_clk) begin
-		if (!payload_frame)
-			uart_data_cam <= 8'hFF;
-		else if (payload_valid)
-			uart_data_cam <= payload_data[7:0];
+	always @(posedge video_clk) begin
+		if (payload_frame)
+			frame_timeout <= 0;
+		else if (!(&frame_timeout))
+			frame_timeout <= frame_timeout + 1'b1;
 	end
+	wire fixed_in_frame = !(&frame_timeout);
 
-	always @(posedge clk12) begin
-		uart_data_clk12_a <= uart_data_cam;
-		uart_data_clk12 <= uart_data_clk12_a;
-		if (!uart_busy)
-			uart_data <= uart_data_clk12;
-	end
+	reg [5:0] read_x;
+	reg [4:0] read_y;
+	wire [7:0] read_data;
+	downsample ds_i(
+		.pixel_clock(video_clk),
+		.in_line(in_line),
+		.in_frame(fixed_in_frame),
+		.pixel_data(payload_data),
+		.data_enable(payload_frame&&payload_valid),
 
-	uart uart_i(
-		.uart_busy(uart_busy),
-		.uart_tx(dbg_tx),
-		// Inputs
-		.uart_wr_i(!uart_busy),
-		.uart_dat_i(uart_data),
-		.sys_clk_i(clk12),
-		.sys_rst_i(areset)
+		.read_clock(clk12),
+		.read_x(read_x),
+		.read_y(read_y),
+		.read_q(read_data)
 	);
+
+	reg do_send = 1'b0;
+	wire uart_busy;
+	reg uart_write;
+	reg [13:0] btn_debounce;
+	reg btn_reg;
+	reg [12:0] uart_holdoff;
+
+	always @(posedge clk12)
+	begin
+		btn_reg <= BTN1;
+
+		if (btn_reg)
+			btn_debounce <= 0;
+		else if (!&(btn_debounce))
+			btn_debounce <= btn_debounce + 1;
+
+
+		uart_write <= 1'b0;
+		if (btn_reg && &btn_debounce && !do_send) begin
+			do_send <= 1'b1;
+			read_x <= 0;
+			read_y <= 0;
+		end
+
+		if (uart_busy)
+			uart_holdoff <= 0;
+		else if (!&(uart_holdoff))
+			uart_holdoff <= uart_holdoff + 1'b1;
+
+		if (do_send) begin
+			if (read_x == 39 && read_y == 19) begin
+				do_send <= 1'b0;
+			end else begin
+				if (&uart_holdoff && !uart_busy && !uart_write) begin
+					uart_write <= 1'b1;
+					if (read_x == 39) begin
+						read_y <= read_y + 1'b1;
+						read_x <= 0;
+					end else begin
+						read_x <= read_x + 1'b1;
+					end
+				end
+			end
+		end
+	end
+
+	uart uart_i (
+	   // Outputs
+	   .uart_busy(uart_busy),   // High means UART is transmitting
+	   .uart_tx(dbg_tx),     // UART transmit wire
+	   // Inputs
+	   .uart_wr_i(uart_write),   // Raise to transmit byte
+	   .uart_dat_i(read_data),  // 8-bit data
+	   .sys_clk_i(clk12),   // System clock, 12 MHz
+	   .sys_rst_i(areset)    // System reset
+	);
+
+
 endmodule
