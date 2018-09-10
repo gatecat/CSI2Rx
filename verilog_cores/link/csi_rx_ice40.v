@@ -83,8 +83,11 @@ module csi_rx_ice40 #(
 	);
 
 	reg [1:0] div;
-	always @(posedge dphy_clk)
-		div <= div + 1'b1;
+	always @(posedge dphy_clk or posedge areset)
+		if (areset)
+			div <= 0;
+		else
+			div <= div + 1'b1;
 	assign word_clk = div[1];
 
 	reg sreset1, sreset2, sreset;

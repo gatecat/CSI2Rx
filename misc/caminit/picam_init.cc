@@ -186,7 +186,7 @@ static void cam_init() {
 	write_cmos_sensor(0x0309,  0x08); //OPPXCK_DIV
 	write_cmos_sensor(0x030B,  0x02); //OPSYCK_DIV
 	write_cmos_sensor(0x030C,  0x00); //PLL_OP_MPY[10:8]
-	write_cmos_sensor(0x030D,  0x08); //PLL_OP_MPY[7:0]
+	write_cmos_sensor(0x030D,  0x0A); //PLL_OP_MPY[7:0]
 	write_cmos_sensor(0x455E,  0x00); //??
 	write_cmos_sensor(0x471E,  0x4B); //??
 	write_cmos_sensor(0x4767,  0x0F); //??

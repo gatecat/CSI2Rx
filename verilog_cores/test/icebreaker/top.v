@@ -49,7 +49,7 @@ module top(input clk12,
 		.PAIRSWAP(2'b10), // lane pair swap (inverts data for given  lane)
 
 		.VC(2'b00), // MIPI CSI-2 "virtual channel"
-		.FS_DT(6'h00), // Frame start data type
+		.FS_DT(6'h12), // Frame start data type
 		.FE_DT(6'h01), // Frame end data type
 		.VIDEO_DT(6'h2A), // Video payload data type (6'h2A = 8-bit raw, 6'h2B = 10-bit raw, 6'h2C = 12-bit raw)
 		.MAX_LEN(8192) // Max expected packet len, used as timeout
@@ -79,20 +79,16 @@ module top(input clk12,
 	reg [22:0] sclk_div;
 	always @(posedge video_clk)
 		sclk_div <= sclk_div + 1'b1;
-
+	
+	reg [15:0] vsync_monostable = 0;
+	always @(posedge video_clk)
+		if (vsync || vsync_monostable != 0)
+			vsync_monostable <= vsync_monostable + 1'b1;
+	
+	
 	assign LEDR_N = !sclk_div[22];
-	assign LEDG_N = !in_frame;
+	assign LEDG_N = !(|vsync_monostable);
 	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[5:1] : 0;
-	// Workaround: not seeing FS/FE packets for some reason
-	reg [13:0] frame_timeout;
-
-	always @(posedge video_clk) begin
-		if (payload_frame)
-			frame_timeout <= 0;
-		else if (!(&frame_timeout))
-			frame_timeout <= frame_timeout + 1'b1;
-	end
-	wire fixed_in_frame = payload_frame || !(&frame_timeout);
 
 	reg [5:0] read_x;
 	reg [4:0] read_y;
@@ -100,7 +96,7 @@ module top(input clk12,
 	downsample ds_i(
 		.pixel_clock(video_clk),
 		.in_line(in_line),
-		.in_frame(fixed_in_frame),
+		.in_frame(!vsync),
 		.pixel_data(payload_data),
 		.data_enable(payload_frame&&payload_valid),
 
