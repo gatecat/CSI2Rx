@@ -177,12 +177,12 @@ static void cam_init() {
 	write_cmos_sensor(0x0175,  0x02); //BINNING_MODE_V_A = x4-binning
 	write_cmos_sensor(0x018C,  0x08); //CSI_DATA_FORMAT_A[15:8]
 	write_cmos_sensor(0x018D,  0x08); //CSI_DATA_FORMAT_A[7:0]
-	write_cmos_sensor(0x0301,  0x05); //VTPXCK_DIV
+	write_cmos_sensor(0x0301,  0x08); //VTPXCK_DIV
 	write_cmos_sensor(0x0303,  0x01); //VTSYCK_DIV
 	write_cmos_sensor(0x0304,  0x03); //PREPLLCK_VT_DIV
 	write_cmos_sensor(0x0305,  0x03); //PREPLLCK_OP_DIV
 	write_cmos_sensor(0x0306,  0x00); //PLL_VT_MPY[10:8]
-	write_cmos_sensor(0x0307,  0x2B); //PLL_VT_MPY[7:0]
+	write_cmos_sensor(0x0307,  0x08); //PLL_VT_MPY[7:0]
 	write_cmos_sensor(0x0309,  0x08); //OPPXCK_DIV
 	write_cmos_sensor(0x030B,  0x02); //OPSYCK_DIV
 	write_cmos_sensor(0x030C,  0x00); //PLL_OP_MPY[10:8]
@@ -203,7 +203,7 @@ static void cam_init() {
 	write_cmos_sensor(0x0600,  0x00); // Test pattern: disable
 	write_cmos_sensor(0x0601,  0x00); // Test pattern: disable
 
-#if 1
+#if 0
 	write_cmos_sensor(0x0600,  0x00); // Test pattern: solid colour
 	write_cmos_sensor(0x0601,  0x01); //
 

@@ -84,7 +84,7 @@ module top(input clk12,
 	assign LEDG_N = !in_frame;
 	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[5:1] : 0;
 	// Workaround: not seeing FS/FE packets for some reason
-	reg [15:0] frame_timeout;
+	reg [13:0] frame_timeout;
 
 	always @(posedge video_clk) begin
 		if (payload_frame)
@@ -92,7 +92,7 @@ module top(input clk12,
 		else if (!(&frame_timeout))
 			frame_timeout <= frame_timeout + 1'b1;
 	end
-	wire fixed_in_frame = !(&frame_timeout);
+	wire fixed_in_frame = payload_frame || !(&frame_timeout);
 
 	reg [5:0] read_x;
 	reg [4:0] read_y;
