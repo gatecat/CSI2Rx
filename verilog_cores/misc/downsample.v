@@ -68,7 +68,7 @@ module downsample (
 					if (pixel_x < 160)
 						pixel_x <= pixel_x + 1;
 				end
-			else if (!in_line)
+			end else if (!in_line) begin
 				pixel_x <= 0;
 				pixel_acc <= 0;
 				if (last_in_line)

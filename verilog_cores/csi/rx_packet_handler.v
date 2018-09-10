@@ -153,7 +153,7 @@ module csi_rx_packet_handler #(
 							&& (hdr_dt == FS_DT || hdr_dt == FE_DT || hdr_dt == VIDEO_DT)
 							&& (hdr_ecc == expected_ecc);
 
-	assign is_hdr = data_frame && data_enable && (state == 3'b001);
+	assign is_hdr = data_enable && (state == 3'b001);
 
 	assign sync_wait = (state == 3'b001);
 	assign packet_done = (state == 3'b011) || lp_detect;

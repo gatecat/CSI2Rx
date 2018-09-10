@@ -82,7 +82,7 @@ module top(input clk12,
 
 	assign LEDR_N = !sclk_div[22];
 	assign LEDG_N = !in_frame;
-	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[4:0] : 0;
+	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[5:1] : 0;
 	// Workaround: not seeing FS/FE packets for some reason
 	reg [15:0] frame_timeout;
 
@@ -140,7 +140,7 @@ module top(input clk12,
 			uart_holdoff <= uart_holdoff + 1'b1;
 
 		if (do_send) begin
-			if (read_x == 39 && read_y == 19) begin
+			if (read_x == 0 && read_y == 30) begin
 				do_send <= 1'b0;
 			end else begin
 				if (&uart_holdoff && !uart_busy && !uart_write) begin
