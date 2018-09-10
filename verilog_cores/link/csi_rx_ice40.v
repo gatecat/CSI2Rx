@@ -65,9 +65,14 @@ module csi_rx_ice40 #(
 		.IO_STANDARD("SB_LVDS_INPUT")
 	) clk_iobuf (
 		.PACKAGE_PIN(dphy_clk_lane),
-		.D_IN_0(dphy_clk)
+		.D_IN_0(dphy_clk_pre)
 	);
-
+	
+	SB_GB clk_gbuf (
+		.USER_SIGNAL_TO_GLOBAL_BUFFER(dphy_clk_pre),
+		.GLOBAL_BUFFER_OUTPUT(dphy_clk)
+	);
+	
 	wire dphy_lp;
 	SB_IO #(
 		.PIN_TYPE(6'b000001),
