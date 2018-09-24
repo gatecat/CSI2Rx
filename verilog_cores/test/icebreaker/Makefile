@@ -9,7 +9,7 @@ all: $(PROJ).rpt $(PROJ).bin
 	yosys -ql yosys.log -p 'synth_ice40 -top top -blif $@' $(SOURCES)
 
 %.asc: $(PIN_DEF) %.blif
-	arachne-pnr -d 5k -o $@ -p $^ -s 3
+	arachne-pnr -d 5k -o $@ -p $^
 
 %.bin: %.asc
 	icepack $< $@

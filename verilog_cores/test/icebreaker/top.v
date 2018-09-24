@@ -88,7 +88,8 @@ module top(input clk12,
 	
 	assign LEDR_N = !sclk_div[22];
 	assign LEDG_N = !(|vsync_monostable);
-	assign {LED5, LED4, LED3, LED2, LED1} = (payload_frame&&payload_valid) ? payload_data[5:1] : 0;
+	assign LED1 = video_clk;
+	assign {LED5, LED4, LED3, LED2} = (payload_frame&&payload_valid) ? payload_data[5:2] : 0;
 
 	reg [5:0] read_x;
 	reg [4:0] read_y;
@@ -162,6 +163,5 @@ module top(input clk12,
 	   .sys_clk_i(clk12),   // System clock, 12 MHz
 	   .sys_rst_i(areset)    // System reset
 	);
-
 
 endmodule
