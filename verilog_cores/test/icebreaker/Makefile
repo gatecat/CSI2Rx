@@ -11,6 +11,9 @@ all: $(PROJ).rpt $(PROJ).bin
 %.asc: %.json $(PIN_DEF)
 	nextpnr-ice40 --up5k --pcf $(PIN_DEF) --json $< --asc $@ --freq 40
 
+gui: %.json $(PIN_DEF)
+	nextpnr-ice40 --up5k --pcf $(PIN_DEF) --json $< --asc $@ --freq 40 --gui
+
 %.bin: %.asc
 	icepack $< $@
 
@@ -28,4 +31,4 @@ clean:
 	rm -f $(PROJ).blif $(PROJ).asc $(PROJ).rpt $(PROJ).bin
 
 .SECONDARY:
-.PHONY: all prog clean
+.PHONY: all prog clean gui

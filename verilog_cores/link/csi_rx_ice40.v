@@ -58,7 +58,7 @@ module csi_rx_ice40 #(
 	output in_frame
 );
 
-	wire dphy_clk;
+	wire dphy_clk, dphy_clk_pre;
 
 	SB_IO #(
 		.PIN_TYPE(6'b000001),
@@ -89,14 +89,17 @@ module csi_rx_ice40 #(
 		else
 			div <= div + 1'b1;
 	assign word_clk = div[1];
-
-	reg sreset1, sreset2, sreset;
-	always @(posedge word_clk) begin
-		sreset1 <= areset;
-		sreset2 <= sreset1;
-		sreset <= sreset2;
-	end
-
+	
+	wire sreset;
+	reg [7:0] sreset_ctr;
+	always @(posedge word_clk or posedge areset)
+		if (areset)
+			sreset_ctr <= 0;
+		else if (!(&sreset_ctr))
+			sreset_ctr <= sreset_ctr + 1'b1;
+			
+	assign sreset = !(&sreset_ctr);
+	
 	wire byte_packet_done, wait_for_sync;
 	wire [LANES*8-1:0] aligned_bytes;
 	wire [LANES-1:0] aligned_bytes_valid;
@@ -109,7 +112,7 @@ module csi_rx_ice40 #(
 		SB_IO #(
 			.PIN_TYPE(6'b000000),
 			.IO_STANDARD("SB_LVDS_INPUT")
-		) clk_iobuf (
+		) data_iobuf (
 			.PACKAGE_PIN(dphy_data_lane[ii]),
 			.INPUT_CLK(dphy_clk),
 			.D_IN_0(din_raw[0]),
