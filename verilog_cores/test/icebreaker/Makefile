@@ -5,11 +5,11 @@ DEVICE=up5k
 
 all: $(PROJ).rpt $(PROJ).bin
 
-%.blif: $(SOURCES)
-	yosys -ql yosys.log -p 'synth_ice40 -top top -blif $@' $(SOURCES)
+%.json: $(SOURCES)
+	yosys -ql yosys.log -p 'synth_ice40 -top top -json $@' $(SOURCES)
 
-%.asc: $(PIN_DEF) %.blif
-	arachne-pnr -d 5k -o $@ -p $^
+%.asc: %.json $(PIN_DEF)
+	nextpnr-ice40 --up5k --pcf $(PIN_DEF) --json $< --asc $@ --freq 40
 
 %.bin: %.asc
 	icepack $< $@
