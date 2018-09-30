@@ -1,0 +1,45 @@
+CAPI=2:
+
+name : ::csi2:0
+
+filesets:
+  icebreaker:
+    files:
+      - misc/downsample.v : {file_type : verilogSource}
+      - test/icebreaker/uart.v : {file_type : verilogSource}
+      - test/icebreaker/top.v : {file_type : verilogSource}
+      - test/icebreaker/icecam.pcf : {file_type : PCF}
+  core:
+    files:
+      - phy/dphy_iserdes.v
+      - phy/dphy_oserdes.v
+      - phy/word_combiner.v
+      - phy/byte_aligner.v
+      - csi/header_ecc.v
+      - csi/rx_packet_handler.v
+    file_type : verilogSource
+  link_ice40:
+    files:
+      - link/csi_rx_ice40.v : {file_type : verilogSource}
+    depend : ["!tool_icestorm? (yosys:techlibs:ice40)"]
+
+targets:
+  default:
+    filesets : [core, link_ice40]
+
+  icebreaker:
+    default_tool : icestorm
+    filesets: [core, link_ice40, icebreaker]
+    tools:
+      icestorm:
+        pnr : next
+        nextpnr_options : [--up5k]
+    toplevel : top
+
+  lint:
+    default_tool : verilator
+    filesets: [core, link_ice40]
+    tools:
+      verilator:
+        mode : lint-only
+    toplevel : csi_rx_ice40
