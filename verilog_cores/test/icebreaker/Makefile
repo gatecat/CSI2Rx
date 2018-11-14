@@ -9,7 +9,7 @@ all: $(PROJ).rpt $(PROJ).bin
 	yosys -ql yosys.log -p 'synth_ice40 -top top -json $@' $(SOURCES)
 
 %.asc: %.json $(PIN_DEF)
-	nextpnr-ice40 --up5k --pcf $(PIN_DEF) --json $< --asc $@ --freq 40
+	nextpnr-ice40 --pre-pack constraints.py --up5k --pcf $(PIN_DEF) --json $< --asc $@ --freq 40
 
 gui: %.json $(PIN_DEF)
 	nextpnr-ice40 --up5k --pcf $(PIN_DEF) --json $< --asc $@ --freq 40 --gui
